@@ -40,6 +40,18 @@ app.post('/graphical', (req, res) => {
   let xend = (req && req.body && req.body.xend) || 0;
   let step = (req && req.body && req.body.step) || 0.1;
 
+  if(xstart){
+    xstart = xstart * 1;
+  }
+
+  if(xend){
+    xend = xend * 1;
+  }
+
+  if(step){
+    step = step * 1;
+  }
+
   let fx1 = (req && req.body && req.body.fx1) || "";
   const numbers = fx1.match(/-?\d+/g);
   const num1 = numbers[0] * 1;
@@ -74,7 +86,6 @@ app.post('/graphical', (req, res) => {
   }
   let text = "No root found in this range";
   if(found){
-    console.log("aaaa");
     for(let j = lower; j <= upper; j += step){
       y2 = num1 * (j+step) + 1*num2;
 
