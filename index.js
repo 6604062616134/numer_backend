@@ -36,23 +36,21 @@ app.get('/get-users', async (req, res) => {
 
 //Root equation
 app.post('/graphical', (req, res) => {
-  //graphical method
-  // res.send('Graphical method');
+  let xstart = (req && req.body && req.body.xstart) || 0;
+  let xend = (req && req.body && req.body.xend) || 0;
+  let step = (req && req.body && req.body.step) || 0.1;
 
-  // const { xstart, fx, xend } = req.body;
-  // let xstart = (req && req.body && req.body.xstart) || 0;
-  // let xend = (req && req.body && req.body.xstart) || 0;
-  // let fx = (req && req.body && req.body.xstart) || 0;
-  let epsilon = 0.0001; //input
-  let xstart = 0; //input
-  let xend = 10;//input
+  let fx1 = (req && req.body && req.body.fx1) || "";
+  const numbers = fx1.match(/-?\d+/g);
+  const num1 = numbers[0] * 1;
+  const num2 = numbers[1] * 1;
+
   let y0 = 0; 
   let y1 = 0;
   let y2 = 0;
-  let x1 = 43; //input
-  let x2 = -180;//input
   let found = false;
   let lower, upper;
+  let epsilon = 0.0001;
 
   let result = {
     "text": "Graphical method",
@@ -63,8 +61,8 @@ app.post('/graphical', (req, res) => {
   };
 
   for(let i = xstart; i <= xend; i ++){
-    y0 = x1 * i + 1 * (x2);
-    y1 = x1 * (i + 1) + 1 * (x2);
+    y0 = num1 * i + 1*num2;
+    y1 = num1 * (i + 1) + 1*num2;
     
     if(y0 * y1 < 0){
       result.iterationFound1 = i; //iteration ที่เจอฟังก์ชั่นลด
@@ -74,28 +72,25 @@ app.post('/graphical', (req, res) => {
       break;
     }
   }
-
+  let text = "No root found in this range";
   if(found){
-    let step = 0.000001; //input
-
+    console.log("aaaa");
     for(let j = lower; j <= upper; j += step){
-      y2 = x1 * (j+step) + 1*x2;
+      y2 = num1 * (j+step) + 1*num2;
 
       result.iteration.push(j);
       result.answer_y.push(y2); //คำตอบแสกนละเอียด
 
-      if(Math.abs(y2) < epsilon){
+      if(y2 < epsilon){
+        console.log("bbbb");
         result.answer_x = j; //iteration ที่เจอคำตอบ
         
-        res.send(result);
-        break;
+        return res.send(result);
       }
     }
-
-    res.send('No root found with this position');
-  }else{
-    res.send('No root found in this range');
+    text = "No root found with this position";
   }
+  res.send(text);
 })
 
 app.post('/bisecton-falseposition', (req, res) => {
