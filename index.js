@@ -86,6 +86,7 @@ app.post('/graphical', (req, res) => {
   }
   let text = "No root found in this range";
   if(found){
+    console.log("aaaaa");
     for(let j = lower; j <= upper; j += step){
       y2 = num1 * (j+step) + 1*num2;
 
@@ -106,12 +107,28 @@ app.post('/graphical', (req, res) => {
 
 app.post('/bisecton-falseposition', (req, res) => {
   let mode = req.body.mode;
-  let epsilon = 0.0001; //input
   let error = 0;
-  let ex = 4; //input
-  let num = 13; //input
-  let xL = 1.5; //input
-  let xR = 2; //input
+  let epsilon = (req && req.body && req.body.epsilon) || 0.00001;
+  let xL = (req && req.body && req.body.xL) || 0;
+  let xR = (req && req.body && req.body.xR) || 0;
+  let roots = (req && req.body && req.body.roots) || 2;
+  let num = (req && req.body && req.body.num) || 1;
+
+  if(xL){
+    xL = xL * 1;
+  }
+  if(xR){
+    xR = xR * 1;
+  }
+  if(epsilon){
+    epsilon = epsilon * 1;
+  }
+  if(roots){
+    roots = roots * 1;
+  }
+  if(num){
+    num = num * 1;
+  }
   
   switch (mode) {
     case "Bisection":
@@ -129,8 +146,8 @@ app.post('/bisecton-falseposition', (req, res) => {
 
       do{
         xM = (xL + xR) / 2;
-        let fxm = Math.pow(xM, ex) - num;
-        let fxr = Math.pow(xR, ex) - num;
+        let fxm = Math.pow(xM, roots) - num;
+        let fxr = Math.pow(xR, roots) - num;
 
         if(fxm * fxr < 0){
           xL = xM;
@@ -166,10 +183,10 @@ app.post('/bisecton-falseposition', (req, res) => {
       };
 
       do{
-        let fxl2 = Math.pow(xL, ex) - num;
-        let fxr2 = Math.pow(xR, ex) - num;
+        let fxl2 = Math.pow(xL, roots) - num;
+        let fxr2 = Math.pow(xR, roots) - num;
         x1 = ((xL*fxr2) - (xR*fxl2)) / (fxr2 - fxl2);
-        let fx1 = Math.pow(x1, ex) - num;
+        let fx1 = Math.pow(x1, roots) - num;
 
         if(fx1 * fxr2 < 0){
           xL = x1;
@@ -198,11 +215,25 @@ app.post('/bisecton-falseposition', (req, res) => {
 app.post('/onepoint', (req, res) => {
   let y = 0;
   let error = 0;
-  let num = 7; //input
-  let ex = 2; //input
-  let epsilon = 0.0001; //input
-  let x = 1; //input
   let i = 1; //count iteration
+  let roots = (req && req.body && req.body.roots) || 2;
+  let num = (req && req.body && req.body.num) || 1;
+  let epsilon = (req && req.body && req.body.epsilon) || 0.00001;
+  let x = (req && req.body && req.body.x) || 1;
+
+  if(roots){
+    roots = roots * 1;
+  }
+  if(num){
+    num = num * 1;
+  }
+  if(epsilon){
+    epsilon = epsilon * 1;
+  }
+  if(x){
+    x = x * 1;
+  }
+
   let result = {
     "text": "One-point itertation method",
     "iteration": [],
@@ -212,7 +243,7 @@ app.post('/onepoint', (req, res) => {
   };
 
   do{
-    y = (1/ex) * ((num/x) + x);
+    y = (1/roots) * ((num/x) + x);
     error = Math.abs(y - x);
     x = y;
     
@@ -228,15 +259,29 @@ app.post('/onepoint', (req, res) => {
 });
 
 app.post('/newton-raphson', (req, res) => {
-  let x0 = 1; //input
   let error = 0;
   let fx = 0;
   let fxdiff = 0;
   let y = 0;
-  let num = 7; //input
-  let ex = 2; //input
-  let epsilon = 0.0001; //input
   let i = 1; //count iteration
+  let x0 = (req && req.body && req.body.x0) || 0;
+  let num = (req && req.body && req.body.num) || 1;
+  let roots = (req && req.body && req.body.roots) || 2;
+  let epsilon = (req && req.body && req.body.epsilon) || 0.00001;
+
+  if(x0){
+    x0 = x0 * 1;
+  }
+  if(num){
+    num = num * 1;
+  }
+  if(roots){
+    roots = roots * 1;
+  }
+  if(epsilon){
+    epsilon = epsilon * 1;
+  }
+
   let result = {
     "text": "Newton-raphson method",
     "iteration": [],
@@ -246,7 +291,7 @@ app.post('/newton-raphson', (req, res) => {
   };
 
   do{
-    fx = Math.pow(x0, ex) - num;
+    fx = Math.pow(x0, roots) - num;
     fxdiff = 2 * x0;
     y = x0 - (fx / fxdiff);
     error = Math.abs(y - x0);
@@ -264,16 +309,33 @@ app.post('/newton-raphson', (req, res) => {
 });
 
 app.post('/secant', (req, res) => {
-  let x0 = 2; //input
-  let x1 = 3; //input
   let error = 0;
   let fx0 = 0;
   let fx1 = 0;
   let x2 = 0;
-  let num = 7; //input
-  let ex = 2; //input
-  let epsilon = 0.0001; //input
   let i = 1; //count iteration
+  let x0 = (req && req.body && req.body.x0) || 0;
+  let x1 = (req && req.body && req.body.x1) || 0;
+  let num = (req && req.body && req.body.num) || 1;
+  let roots = (req && req.body && req.body.roots) || 2;
+  let epsilon = (req && req.body && req.body.epsilon) || 0.00001;
+
+  if(x0){
+    x0 = x0 * 1;
+  }
+  if(x1){
+    x1 = x1 * 1;
+  }
+  if(num){
+    num = num * 1;
+  }
+  if(roots){
+    roots = roots * 1;
+  }
+  if(epsilon){
+    epsilon = epsilon * 1;
+  }
+
   let result = {
     "text": "Secant method",
     "iteration": [],
@@ -283,8 +345,8 @@ app.post('/secant', (req, res) => {
   };
 
   do{
-    fx0 = Math.pow(x0, ex) - num;
-    fx1 = Math.pow(x1, ex) - num;
+    fx0 = Math.pow(x0, roots) - num;
+    fx1 = Math.pow(x1, roots) - num;
     x2 = x1 - ((fx1 * (x1 - x0)) / (fx1 - fx0));
     error = Math.abs(x2 - x1);
     x0 = x1;
@@ -832,6 +894,208 @@ app.post('/newton-divided-difference', (req, res) => {
 
 });
 
+app.post('/lagrange', (req, res) => {
+  let mode = req.body.mode;
+
+  switch(mode){
+    case "linear" :
+      const { x0, x1} = req.body;
+      const { fx0, fx1 } = req.body;
+      const x = req.body.x; // ค่า x ที่ต้องการหาค่า f(x)
+
+      let fx_l = ((fx0 * (x - x1)) - (fx1 * (x - x0))) / (x0 - x1);
+    
+      let result = {
+        "text": "Lagrange (linear)",
+        "answer": fx_l
+      };
+    
+      res.send(result);
+      break;
+    
+    case "quadratic" :
+      const { x0: x0_, x1: x1_, x2: x2_ } = req.body;
+      const { fx0: fx0_, fx1: fx1_, fx2: fx2_ } = req.body;
+      const x_ = req.body.x; // ค่า x ที่ต้องการหาค่า f(x)
+    
+      let fx_q = (fx0_ * ((x_ - x1_) * (x_ - x2_)) / ((x0_ - x1_) * (x0_ - x2_))) +
+                 (fx1_ * ((x_ - x0_) * (x_ - x2_)) / ((x1_ - x0_) * (x1_ - x2_))) +
+                 (fx2_ * ((x_ - x0_) * (x_ - x1_)) / ((x2_ - x0_) * (x2_ - x1_)));
+    
+      let result2 = {
+        "text": "Lagrange (quadratic)",
+        "answer": fx_q
+      };
+    
+      res.send(result2);
+      break;
+  }
+
+});
+
+app.post('/spline', (req, res) => {
+  let mode = req.body.mode;
+
+  switch(mode){
+    case "linear" :
+      const { x0, x1} = req.body;
+      const { fx0, fx1 } = req.body;
+      const x = req.body.x; // ค่า x ที่ต้องการหาค่า f(x)
+
+      let fx_l = fx0 + ((fx1 - fx0) / (x1 - x0)) * (x - x0);
+    
+      let result = {
+        "text": "Spline (linear)",
+        "answer": fx_l
+      };
+    
+      res.send(result);
+      break;
+    
+    case "quadratic" :
+      const { x0: x0_, x1: x1_ } = req.body;
+      const { fx0: fx0_, fx1: fx1_ } = req.body;
+      const x_ = req.body.x; // ค่า x ที่ต้องการหาค่า f(x)
+    
+      let fx_q = fx0_ + ((fx1_ - fx0_) / (x1_ - x0_)) * (x_ - x0_);
+    
+      let result2 = {
+        "text": "Spline (quadratic)",
+        "answer": fx_q
+      };
+    
+      res.send(result2);
+      break;
+    
+    case "cubic" :
+      const { x0: x0__, x1: x1__, x2: x2__ } = req.body;
+      const { fx0: fx0__, fx1: fx1__, fx2: fx2__ } = req.body;
+      const x__ = req.body.x; // ค่า x ที่ต้องการหาค่า f(x)
+    
+      let h0 = x1__ - x0__;
+      let h1 = x2__ - x1__;
+      let d0 = (fx1__ - fx0__) / h0;
+      let d1 = (fx2__ - fx1__) / h1;
+    
+      let a = (d0 - d1) / (h0 + h1);
+      let b = a * h1 + d1;
+      let c = d1;
+    
+      let fx_c = fx2__ + b * (x__ - x2__) + a * Math.pow((x__ - x2__), 2) + c * Math.pow((x__ - x2__), 3);
+    
+      let result3 = {
+        "text": "Spline (cubic)",
+        "answer": fx_c
+      };
+    
+      res.send(result3);
+      break;
+    }
+});
+
+//extrapolation
+app.post('/least-squareregression', (req, res) => {
+  let mode = req.body.mode;
+
+  switch(mode){
+    case "linear" :
+      const { xi, yi } = req.body;
+      const n = xi.length;
+      let sum_x = 0;
+      let sum_y = 0;
+      let sum_x2 = 0;
+      let sum_xy = 0;
+
+      for (let i = 0; i < n; i++) {
+        sum_x += xi[i];
+        sum_y += yi[i];
+        sum_x2 += Math.pow(xi[i], 2);
+        sum_xy += xi[i] * yi[i];
+      }
+
+      let a = ((n * sum_xy) - (sum_x * sum_y)) / ((n * sum_x2) - Math.pow(sum_x, 2));
+      let b = ((sum_y * sum_x2) - (sum_x * sum_xy)) / ((n * sum_x2) - Math.pow(sum_x, 2));
+
+      let result = {
+        "text": "Least square regression (linear)",
+        "a": a,
+        "b": b
+      };
+
+      res.send(result);
+      break;
+    
+    case "polynomial" :
+      const { xi: xi_, yi: yi_ } = req.body;
+      const n_ = xi_.length;
+      const degree = req.body.degree;
+      let matrixA = [];
+      let matrixB = [];
+
+      for (let i = 0; i < degree + 1; i++) {
+        let row = [];
+        for (let j = 0; j < degree + 1; j++) {
+          let sum = 0;
+          for (let k = 0; k < n_; k++) {
+            sum += Math.pow(xi_[k], i + j);
+          }
+          row.push(sum);
+        }
+        matrixA.push(row);
+      }
+
+      for (let i = 0; i < degree + 1; i++) {
+        let sum = 0;
+        for (let j = 0; j < n_; j++) {
+          sum += yi_[j] * Math.pow(xi_[j], i);
+        }
+        matrixB.push([sum]);
+      }
+
+      let result2 = {
+        "text": "Least square regression (polynomial)",
+        "answer": math.lusolve(matrixA, matrixB)
+      };
+
+      res.send(result2);
+      break;
+  }
+});
+
+app.post('/multiple-linearregression', (req, res) => {
+  const { xi, yi } = req.body;
+  const n = xi.length;
+  const m = xi[0].length;
+  let matrixA = [];
+  let matrixB = [];
+
+  for (let i = 0; i < m + 1; i++) {
+    let row = [];
+    for (let j = 0; j < m + 1; j++) {
+      let sum = 0;
+      for (let k = 0; k < n; k++) {
+        sum += Math.pow(xi[k][i - 1], i + j - 2);
+      }
+      row.push(sum);
+    }
+    matrixA.push(row);
+  }
+
+  for (let i = 0; i < m + 1; i++) {
+    let sum = 0;
+    for (let j = 0; j < n; j++) {
+      sum += yi[j] * Math.pow(xi[j][i - 1], i - 1);
+    }
+    matrixB.push([sum]);
+  }
+
+  let result = {
+    "text": "Multiple linear regression",
+    "answer": math.lusolve(matrixA, matrixB)
+  };
+
+  res.send(result);
+});
 
 
 app.listen(port, () => {
