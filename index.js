@@ -84,16 +84,15 @@ app.post('/graphical', (req, res) => {
       break;
     }
   }
+  
   if(found){
-    console.log("aaaaa");
     for(let j = lower; j <= upper; j += step){
       y2 = num1 * (j+step) + 1*num2;
 
       result.iteration.push(j);
       result.answer_y.push(y2); //คำตอบแสกนละเอียด
 
-      if(y2 < epsilon){
-        console.log("bbbb");
+      if(Math.abs(y2) < epsilon){
         result.answer_x = j; //iteration ที่เจอคำตอบ
         
         return res.json(result);
