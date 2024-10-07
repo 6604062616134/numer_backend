@@ -1,14 +1,14 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
 const math = require('mathjs');
 
-const app = express()
-const port = 8000
+const app = express();
+const port = 8000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors())
+app.use(cors());
 
 const mysql = require('mysql2/promise');
 
@@ -36,8 +36,8 @@ app.get('/get-users', async (req, res) => {
 
 //Root equation
 app.post('/graphical', (req, res) => {
-  let xstart = (req && req.body && req.body.xstart) || 0;
-  let xend = (req && req.body && req.body.xend) || 0;
+  let xstart = (req && req.body && req.body.xStart) || 0;
+  let xend = (req && req.body && req.body.xEnd) || 0;
   let step = (req && req.body && req.body.step) || 0.1;
 
   if(xstart){
@@ -52,7 +52,7 @@ app.post('/graphical', (req, res) => {
     step = step * 1;
   }
 
-  let fx1 = (req && req.body && req.body.fx1) || "";
+  let fx1 = (req && req.body && req.body.function) || "";
   const numbers = fx1.match(/-?\d+/g);
   const num1 = numbers[0] * 1;
   const num2 = numbers[1] * 1;
@@ -84,7 +84,6 @@ app.post('/graphical', (req, res) => {
       break;
     }
   }
-  let text = "No root found in this range";
   if(found){
     console.log("aaaaa");
     for(let j = lower; j <= upper; j += step){
@@ -97,13 +96,14 @@ app.post('/graphical', (req, res) => {
         console.log("bbbb");
         result.answer_x = j; //iteration ที่เจอคำตอบ
         
-        return res.send(result);
+        return res.json(result);
       }
     }
-    text = "No root found with this position";
+    res.json({ message: "No root found with this position" });
+  }else{
+    res.json({ message: "No root found in this range" });
   }
-  res.send(text);
-})
+});
 
 app.post('/bisecton-falseposition', (req, res) => {
   let mode = req.body.mode;
@@ -210,7 +210,7 @@ app.post('/bisecton-falseposition', (req, res) => {
 
       default: res.send('please select method'); break;
   }
-})
+});
 
 app.post('/onepoint', (req, res) => {
   let y = 0;
@@ -1100,4 +1100,4 @@ app.post('/multiple-linearregression', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`)
-})
+});
