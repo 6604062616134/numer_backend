@@ -92,7 +92,7 @@ app.post('/graphical', (req, res) => {
       result.iteration.push(j);
       result.answer_y.push(y2); //คำตอบแสกนละเอียด
 
-      if(Math.abs(y2) < epsilon){
+      if(y2< epsilon){
         result.answer_x = j; //iteration ที่เจอคำตอบ
         
         return res.json(result);
